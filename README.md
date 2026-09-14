@@ -1,19 +1,21 @@
 [![Screenshot-20260528-172644-Bazaart.jpg](https://i.postimg.cc/FsFhjMXz/Screenshot-20260528-172644-Bazaart.jpg)](https://postimg.cc/s18Fz0XC)
 
 [![homescreen.png](https://i.postimg.cc/BZgFgfkK/homescreen.png)](https://postimg.cc/Jtstrv1r)
-## **About**
+
+# PWN//NET-Toolkit
 
 **PWN//NET** is an **ethical bug-hunting** and **networking toolkit** designed for **security researchers, penetration testers, and enthusiasts**. From identifying **critical vulnerabilities** to uncovering **hidden attack surfaces**, **PWN//NET** equips you with **45+ real-world scanners and diagnostic tools** to find **exploitable bugs**, **exposed secrets**, and **misconfigurations** — all in a **clean, responsive interface**.
 
 Whether you're a **beginner** learning the ropes of **ethical hacking** or a **seasoned professional** hunting for **bounties** on production **targets**, **PWN//NET** provides the **advanced reconnaissance** capabilities you need to **succeed**.
 
-**Available on Web + Android APK**
+#### **Available on Web + Android APK**
 
 ---
 
 ## ✨ Core Features
 
-- **⚡ Tools Grid** — **48 ready-to-use tools including**:
+### **⚡ Tools Grid** - **48 ready-to-use tools including**:
+
   - CVE Database & ExploitDB 
   - AI Vulnerability Analyzer
   - Subdomain Enumeration
@@ -31,13 +33,18 @@ Whether you're a **beginner** learning the ropes of **ethical hacking** or a **s
   - Native Nmap
   - And many more...
 
-- **🐞 Ethical Bug Hunting** — **Purpose-built for security researchers, beginners, and seasoned professionals** to identify real **attack vectors** like **exposed API keys, subdomains, and loose CORS** policies.
+### **🐞 Ethical Bug Hunting**
 
-- **🖥️ Live Terminal** — **Real-time** command **output** so you can see **exactly** what’s happening under the hood.
+**Purpose-built for security researchers, beginners**, and **seasoned professionals** to **identify real attack vectors** like **exposed API keys, subdomains**, and **loose CORS policies**.
 
-- **📜 Logs System** — Automatically saves your **activity and results** for later **review**.
+- **🖥️ Live Terminal** — **Real-time command output** so you can **see exactly what’s happening under the hood**.
 
-- **📚 Learning Resources** — **Built-in** references:
+- **📜 Logs System** — **Automatically saves your activity and results** for **later review**.
+
+### **📚 Learning Resources**
+
+#### **Built-in references**:
+
   - Common Ports
   - OSI Model
   - Nmap Cheat Sheet
@@ -46,13 +53,13 @@ Whether you're a **beginner** learning the ropes of **ethical hacking** or a **s
 
 ---
 
-### **Screenshots** 
+## **Screenshots** 
 
 <a href='https://postimg.cc/WDc6v9CG' target='_blank'><img src='https://i.postimg.cc/WDc6v9CG/PWNNET-ICON5.jpg' border='0' alt='PWNNET-ICON5'></a>  <a href="https://postimg.cc/zyvSL93G" target="_blank"><img src="https://i.postimg.cc/zyvSL93G/Screenshot-2026-06-21-at-5-34-23-AM.png" alt="Screenshot-2026-06-21-at-5-34-23-AM"></a> <a href="https://postimg.cc/CR5HZWdM" target="_blank"><img src="https://i.postimg.cc/CR5HZWdM/Screenshot-2026-06-21-at-5-35-11-AM.png" alt="Screenshot-2026-06-21-at-5-35-11-AM"></a> <a href="https://postimg.cc/xX8ykWq0" target="_blank"><img src="https://i.postimg.cc/xX8ykWq0/Screenshot-2026-06-21-at-5-35-54-AM.png" alt="Screenshot-2026-06-21-at-5-35-54-AM"></a> <a href="https://postimg.cc/qNqXt9g4" target="_blank"><img src="https://i.postimg.cc/qNqXt9g4/Screenshot-2026-06-21-at-5-36-11-AM.png" alt="Screenshot-2026-06-21-at-5-36-11-AM"></a>
 
 ---
 
-### 📱 **Mobile App (Android)**
+## 📱 **Mobile App (Android)**
 
 1. **Download** the **latest** `.apk` from the [Releases](https://github.com/K4N3CO-LABS/PWNNET-Toolkit/releases) page.
 2. **Enable "Install from Unknown Sources"** in your Android **security** settings.
@@ -67,7 +74,8 @@ Whether you're a **beginner** learning the ropes of **ethical hacking** or a **s
 ```bash
 # 1. Clone the repository
 git clone https://github.com/K4N3CO-LABS/PWNNET-Toolkit.git
-
+```
+```bash
 # 2. Navigate into the project
 cd PWNNET-Toolkit-main
 ```
@@ -79,13 +87,13 @@ npm install
 # 4. Start the development server
 npm run dev
 ```
-**To open app:**
+### **To open app:**
 
 **Click** the **URL** shown in the **terminal** *(usually http://localhost:3000 or http://0.0.0.0:3000)*.
 
 ---
 
- ### 🛠️ **Tech Stack**
+ ## 🛠️ **Tech Stack**
 
 | Layer          | Technology                          |
 |----------------|-------------------------------------|
@@ -97,7 +105,7 @@ npm run dev
 
 ---
 
-### 📱 Android Build (Capacitor)
+## 📱 Android Build (Capacitor)
 This project uses **Capacitor** to wrap the web app into a **native Android project**. The **native** code is **located** in the `android/` folder, which can be **opened directly** in **Android Studio**.
 
 To **build and sync** the **latest web code** to the **Android project**:
@@ -116,35 +124,52 @@ npx cap open android
 
 ---
 
-### 📌 **Roadmap / Future Plans**
+## 📌 **Roadmap / Future Plans**
 
 - **Add** more **advanced tools** *(vulnerability scanning, packet crafting, etc.)*
 - **Export** results as **PDF**, **JSON**, or **CSV**
 - **Desktop** application using **Electron**
+
 ---
 
-### ⭐ **Support the Project**
+## ⭐ **Support the Development**
 
-If you find **PWN//NET** **useful**, **please** consider giving the project a **Star** ⭐ — it **helps** a lot!
+If you find **PWN//NET-Toolkit** **useful for your security research**, **please Star ⭐ the project**—it **drives further development!!**
 
-**Feel free** to **open issues** or **submit pull** requests. **Contributions are always welcome**!
+### **Contributions:**
 
-**Donations** *(optional but greatly appreciated)*:
+**Bug reports, add new feature** and **pull requests** are **always welcome!**.
 
-**Bitcoin: (BTC)**
+### **Donations:**
+
+**BuyMeACoffee**: https://buymeacoffee.com/k4n3co
+
+**Bitcoin**:
+
 ```
 bc1q6lmkuju3kf7f8624fwt5qs7k5mf63mekgcnzf4
 ```
+
 ---
 
-### **Important**
+## ⚠️ **Disclaimer**
 
-**PWN//NET-Toolkit** is for **educational and authorized use**.
+This tool is for **educational and authorized security testing purposes ONLY!**. The **developers & contributors** assume **NO responsibility** for **ANY** **misuse or damage** caused by **this software**. **Please use it responsibly**. **Thank you!**
 
-**Only** use on **networks** and **systems** you have **permission** to test on. **Enjoy responsibly**!
 
 ---
 
 ## 📄 **License**
 
-This project is **licensed** under the [MIT License](LICENSE).
+This project is **licensed** to **K4N3CO** under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  <b>The one's who MIND don't matter. The one's who MATTER don't mind.</b><br>
+  </i>
+</p>
+<p align="center">
+  <b>Created by K4N3CO ©2026</b><br>
+  <a href="https://github.com/K4N3CO">GitHub</a>
+</p>
