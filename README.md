@@ -73,7 +73,7 @@ Whether you're a **beginner** learning the ropes of **ethical hacking** or a **s
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/K4N3CO-LABS/PWNNET-Toolkit.git
+git clone https://github.com/K4N3CO/PWNNET-Toolkit.git
 ```
 ```bash
 # 2. Navigate into the project
