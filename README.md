@@ -14,7 +14,7 @@ Whether you're a **beginner** learning the ropes of **ethical hacking** or a **s
 
 ## ✨ Core Features
 
-### **⚡ Tools Grid** - **48 ready-to-use tools including**:
+### 🧰 **Tools Grid** - **48 ready-to-use tools including**:
 
   - CVE Database & ExploitDB 
   - AI Vulnerability Analyzer
@@ -133,7 +133,7 @@ npx cap open android
 
 ## ⭐ **Support the Development**
 
-If you find **PWN//NET-Toolkit** **useful for your security research**, **please Star ⭐ the project**—it **drives further development!!**
+If you find the **PWN//NET-Toolkit** **useful for your security research**, **please Star ⭐ the project**—it **drives further development!!**
 
 ### **Contributions:**
 
@@ -141,9 +141,9 @@ If you find **PWN//NET-Toolkit** **useful for your security research**, **please
 
 ### **Donations:**
 
-**BuyMeACoffee**: https://buymeacoffee.com/k4n3co
+☕️ **BuyMeACoffee**: https://buymeacoffee.com/k4n3co
 
-**Bitcoin**:
+**Bitcoin (₿)**:
 
 ```
 bc1q6lmkuju3kf7f8624fwt5qs7k5mf63mekgcnzf4
@@ -158,7 +158,7 @@ This tool is for **educational and authorized security testing purposes ONLY!**.
 
 ---
 
-## 📄 **License**
+## 🪪 **License**
 
 This project is **licensed** to **K4N3CO** under the [MIT License](LICENSE).
 
