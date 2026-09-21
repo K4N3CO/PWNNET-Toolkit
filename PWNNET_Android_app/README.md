@@ -61,7 +61,7 @@ Whether you're a **beginner** learning the ropes of **ethical hacking** or a **s
 
 ## 📱 **Mobile App (Android)**
 
-1. **Download** the **latest** `.apk` from the [Releases](https://github.com/K4N3CO-LABS/PWNNET-Toolkit/releases) page.
+1. **Download** the **latest** `.apk` from the [Releases](https://github.com/K4N3CO/PWNNET-Toolkit/releases) page.
 2. **Enable "Install from Unknown Sources"** in your Android **security** settings.
 3. **Install**, then **Open** the app.
 
