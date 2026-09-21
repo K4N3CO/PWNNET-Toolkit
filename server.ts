@@ -229,112 +229,81 @@ app.get('/api/net/spider', async (req, res) => {
     const allLinks = new Set<string>();
     
     const startTime = Date.now();
-    const MAX_PAGES = 5; // limit depth
+    const MAX_PAGES = 15; // Increased depth for superior discovery
+    const CONCURRENCY = 3; // Process multiple pages at once
     
     while (queue.length > 0 && crawled.size < MAX_PAGES) {
-      if (Date.now() - startTime > 15000) break; // 15s absolute timeout
+      if (Date.now() - startTime > 25000) break; // 25s absolute timeout
       
-      const currentUrl = queue.shift()!;
-      if (crawled.has(currentUrl)) continue;
-      crawled.add(currentUrl);
+      // Batch process URLs for speed
+      const currentBatch = queue.splice(0, CONCURRENCY);
 
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6000);
-        
-        // Try https first, if fails try http (only for the initial url)
-        let fetchUrl = currentUrl;
-        let response;
+      await Promise.all(currentBatch.map(async (fetchUrl) => {
+        if (crawled.has(fetchUrl)) return;
+        crawled.add(fetchUrl);
+
         try {
-          response = await fetch(fetchUrl, { 
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+          const response = await fetch(fetchUrl, {
             signal: controller.signal,
-            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; PWNNET-Spider/1.0)' }
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+            }
           });
-        } catch (e) {
-          if (currentUrl === baseUrl && currentUrl.startsWith('https://')) {
-            fetchUrl = currentUrl.replace('https://', 'http://');
-            const fallbackController = new AbortController();
-            const fallbackTimeout = setTimeout(() => fallbackController.abort(), 6000);
-            try {
-               response = await fetch(fetchUrl, { signal: fallbackController.signal, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; PWNNET-Spider/1.0)' } });
-            } catch(fallbackErr) {
-               clearTimeout(fallbackTimeout);
-               continue;
-            }
-            clearTimeout(fallbackTimeout);
-          } else {
-             continue;
-          }
-        }
-        clearTimeout(timeoutId);
-        
-        if (!response || !response.ok) continue;
-        
-        const contentType = response.headers.get('content-type') || '';
-        if (!contentType.includes('text/html')) {
-           allLinks.add(fetchUrl); // it's a file or other resource
-           continue;
-        }
-        
-        const text = await response.text();
-        
-        // Extract links from href, src, action
-        const urlRegex = /(?:href|src|action)\s*=\s*(?:["'])(.*?)(?:["'])/gi;
-        let match;
-        while ((match = urlRegex.exec(text)) !== null) {
-          let l = match[1].trim();
-          if (!l || l.startsWith('javascript:') || l.startsWith('mailto:') || l.startsWith('tel:') || l.startsWith('#') || l.startsWith('data:')) continue;
+          clearTimeout(timeoutId);
           
-          let absoluteUrl = '';
-          try {
-            absoluteUrl = new URL(l, fetchUrl).href;
-          } catch(e) {
-            continue;
-          }
+          if (!response || !response.ok) return;
           
-          allLinks.add(absoluteUrl);
+          const contentType = response.headers.get('content-type') || '';
+          const text = await response.text();
           
-          // Enqueue internal links for further crawling
-          try {
-            const parsedUrl = new URL(absoluteUrl);
-            const baseHost = new URL(baseUrl).host;
-            if (parsedUrl.host === baseHost && !crawled.has(absoluteUrl) && !queue.includes(absoluteUrl)) {
-                // Avoid crawling non-html extensions
-                if (!absoluteUrl.match(/\.(png|jpg|jpeg|gif|css|js|json|xml|pdf|zip|mp4|svg|ico|woff|woff2|ttf|eot)$/i)) {
-                    queue.push(absoluteUrl);
+          // SUPERIOR EXTRACTION: Catch href, src, action, and data-links, even in JS strings
+          const patterns = [
+            /(?:href|src|action)\s*=\s*(?:["'])(.*?)(?:["'])/gi,
+            /(?:["'])(https?:\/\/[a-z0-9-+&@#/%?=~_|!:,.;]*[a-z0-9-+&@#/%=~_|])(?:["'])/gi, // URL strings in JS
+            /(?:["'])(\/[a-z0-9-_/.?=#&]+)(?:["'])/gi // Relative paths in JS
+          ];
+
+          patterns.forEach(regex => {
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+              let l = match[1].trim();
+              if (!l || l.startsWith('javascript:') || l.startsWith('mailto:') || l.startsWith('tel:') || l.startsWith('#') || l.startsWith('data:')) continue;
+
+              try {
+                const absoluteUrl = new URL(l, fetchUrl).href;
+                allLinks.add(absoluteUrl);
+
+                // Intelligent Enqueue
+                const parsedUrl = new URL(absoluteUrl);
+                const baseHost = new URL(baseUrl).host;
+                if (parsedUrl.host === baseHost && !crawled.has(absoluteUrl) && !queue.includes(absoluteUrl)) {
+                    // Avoid non-crawlable assets but still list them
+                    if (!absoluteUrl.match(/\.(png|jpg|jpeg|gif|css|pdf|zip|mp4|svg|ico|woff|woff2|ttf|eot)$/i)) {
+                        queue.push(absoluteUrl);
+                    }
                 }
+              } catch(e) {}
             }
-          } catch(e) {}
-        }
-      } catch (e) {
-        // Continue to next URL in queue if one fails
-        continue;
-      }
+          });
+        } catch (e) {}
+      }));
     }
-    
-    // Format output
-    const uniqueLinks = Array.from(allLinks);
-    
+
+    const uniqueLinks = Array.from(allLinks).sort();
     const internalLinks = uniqueLinks.filter(l => { try { return new URL(l).host === new URL(baseUrl).host; } catch(e) { return false; } });
     const externalLinks = uniqueLinks.filter(l => !internalLinks.includes(l));
+
+    let result = `Spider Results for ${baseUrl} (Deep-crawled ${crawled.size} pages):\n`;
+    result += `\n[--- INTERNAL ASSETS/LINKS (${internalLinks.length}) ---]\n${internalLinks.slice(0, 150).join('\n')}`;
+    result += `\n\n[--- EXTERNAL DOMAINS (${externalLinks.length}) ---]\n${externalLinks.slice(0, 100).join('\n')}`;
     
-    // Create detailed string for pwnux or legacy usages
-    let result = `Spider Results for ${baseUrl} (Crawled ${crawled.size} pages):\n`;
-    const MAX_RESULTS = 100;
-    
-    result += `\n[--- INTERNAL LINKS (${internalLinks.length}) ---]\n`;
-    result += internalLinks.slice(0, MAX_RESULTS).join('\n') || 'None found.';
-    if (internalLinks.length > MAX_RESULTS) result += `\n...and ${internalLinks.length - MAX_RESULTS} more.`;
-    
-    result += `\n\n[--- EXTERNAL LINKS (${externalLinks.length}) ---]\n`;
-    result += externalLinks.slice(0, MAX_RESULTS).join('\n') || 'None found.';
-    if (externalLinks.length > MAX_RESULTS) result += `\n...and ${externalLinks.length - MAX_RESULTS} more.`;
-    
-    if (uniqueLinks.length === 0) result += '\nNo links found.';
-    
-    res.json({ result: result.trim(), links: uniqueLinks.slice(0, 500) });
+    res.json({ result, links: uniqueLinks });
   } catch (e) {
-    res.json({ result: 'Failed to crawl target. Target may be blocking requests or offline.', links: [] });
+    res.json({ result: 'Superior crawl failed. Target unreachable.', links: [] });
   }
 });
 
