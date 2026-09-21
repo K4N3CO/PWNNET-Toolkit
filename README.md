@@ -142,9 +142,12 @@ If you find the **PWN//NET-Toolkit** **useful for your security research**, **pl
 
 ### **Donations:**
 
-☕️ **BuyMeACoffee**: https://buymeacoffee.com/k4n3co
+<img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black">
 
-**Bitcoin (₿)**:
+**https://buymeacoffee.com/k4n3co**
+
+
+<img src="https://img.shields.io/badge/Donate-Bitcoin-F7931A?style=for-the-badge&logo=bitcoin&logoColor=white">
 
 ```
 bc1q6lmkuju3kf7f8624fwt5qs7k5mf63mekgcnzf4
@@ -166,10 +169,8 @@ This project is **licensed** to **K4N3CO** under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  <b>The one's who MIND don't matter. The one's who MATTER don't mind.</b><br>
-  </i>
-</p>
-<p align="center">
-  <b>Created by K4N3CO ©2026</b><br>
-  <a href="https://github.com/K4N3CO">GitHub</a>
-</p>
+  <b><img src="https://img.shields.io/badge/Developed By-K4N3CO.LABS ©2026-darkred?style=for-the-badge&logo=maserati&logoColor=white">
+</b><br>
+
+<p align="center"> 
+<b><img src="https://img.shields.io/badge/The one's who MIND don't matter-The one's who MATTER don't mind-cyan?style=for-the-badge&logo=counterstrike&logoColor=white">
