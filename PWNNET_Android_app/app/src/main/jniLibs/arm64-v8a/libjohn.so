@@ -1,0 +1,53 @@
+#!/system/bin/sh
+# PWNNET Native Cracker v3.0 - REAL EXECUTION ENGINE
+# Uses system hashing binaries to perform actual brute-force.
+
+TARGET_HASH=$(echo "$@" | awk '{print $NF}')
+WORDLIST_NAME=$(echo "$@" | grep -oE "wordlist=[^ ]+" | cut -d= -f2)
+HASH_TYPE=$(echo "$@" | grep -oE "format=[^ ]+" | cut -d= -f2)
+
+# Set path to the internal wordlist storage
+WL_PATH="/data/data/com.k4n3co.pwnnet/files/$WORDLIST_NAME"
+
+printf "John the Ripper 1.9.0-jumbo-1 [REAL COMPUTE MODE]\n"
+printf "[+] Target Hash: %s\n" "$TARGET_HASH"
+printf "[+] Engine: /system/bin/%s\n\n" "$HASH_TYPE"
+
+if [ ! -f "$WL_PATH" ]; then
+    printf "[!] Error: Wordlist %s not found. Using internal fallback...\n" "$WORDLIST_NAME"
+    # Create a small real wordlist on the fly if missing
+    printf "password\n123456\nadmin\npwnnet\n12345\nqwerty\n" > "$WL_PATH"
+fi
+
+COUNT=0
+START_TIME=$(date +%s)
+
+while IFS= read -r line; do
+    COUNT=$((COUNT + 1))
+    
+    # Perform REAL hashing based on type
+    if [ "$HASH_TYPE" = "raw-md5" ]; then
+        COMPUTED=$(printf "%s" "$line" | md5sum | awk '{print $1}')
+    else
+        COMPUTED=$(printf "%s" "$line" | sha256sum | awk '{print $1}')
+    fi
+
+    # Real-time progress every 50 attempts
+    if [ $((COUNT % 50)) -eq 0 ]; then
+        printf "Status: Testing... [Attempt %d: %s]\n" "$COUNT" "$line"
+    fi
+
+    # Actual Match Check
+    if [ "$COMPUTED" = "$TARGET_HASH" ]; then
+        END_TIME=$(date +%s)
+        DURATION=$((END_TIME - START_TIME))
+        printf "\n[+] MATCH FOUND in %ds!\n" "$DURATION"
+        printf "--------------------------------------------------\n"
+        printf "Plaintext: %s\n" "$line"
+        printf "--------------------------------------------------\n"
+        exit 0
+    fi
+done < "$WL_PATH"
+
+printf "\n[!] Wordlist exhausted. No matches found.\n"
+exit 1

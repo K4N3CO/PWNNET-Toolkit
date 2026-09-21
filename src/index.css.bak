@@ -1,0 +1,348 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --neon-green-val: #00ffcc;
+  --neon-green-dim-val: rgba(0, 255, 204, 0.2);
+  --obsidian-val: #050510;
+  --dark-gray-val: #111116;
+  --border-gray-val: #3f3f46;
+}
+
+:root.light {
+  --neon-green-val: #008f21;
+  --neon-green-dim-val: rgba(0, 143, 33, 0.12);
+  --obsidian-val: #f4f4f5;
+  --dark-gray-val: #e4e4e7;
+  --border-gray-val: #cbd5e1;
+}
+
+@theme {
+  --color-neon-green: var(--neon-green-val);
+  --color-neon-green-dim: var(--neon-green-dim-val);
+  --color-obsidian: var(--obsidian-val);
+  --color-dark-gray: var(--dark-gray-val);
+  --color-border-gray: var(--border-gray-val);
+  
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html, body {
+    overscroll-behavior: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-obsidian text-neon-green font-sans overflow-hidden selection:bg-neon-green selection:text-black;
+  }
+}
+
+/* Custom scrollbar for terminal vibes */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-green-val);
+}
+
+.glow-text {
+  text-shadow: 0 0 10px var(--neon-green-dim-val);
+}
+.glow-border {
+  box-shadow: 0 0 15px var(--neon-green-dim-val);
+}
+
+.glow-shadow {
+  box-shadow: 0px 4px 20px rgba(0, 255, 204, 0.15);
+}
+
+.glass-panel {
+  background: rgba(10, 10, 15, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+
+/* =========================================
+   LIGHT MODE DEVIATIONS & STYLING OVERRIDES
+   ========================================= */
+:root.light {
+  --neon-green-val: #0f172a; /* Solid high-contrast slate-900 instead of faint green */
+  --neon-green-dim-val: rgba(15, 23, 42, 0.1);
+  --obsidian-val: #f1f5f9; /* Warm Slate-100 background */
+  --dark-gray-val: #0f172a; /* Slate-700 indicators */
+  --border-gray-val: #94a3b8; /* Rich slate-400 borders */
+}
+
+:root.light body {
+  background-color: #f8fafc !important; /* Slate-50 main body canvas */
+  color: #0f172a !important; /* Ultimate dark slate text readability */
+}
+
+/* Preserve premium dark canopy top-bar & bottom-bar as beautiful dark visual anchors */
+:root.light .bg-\[\#070707\] {
+  background-color: #0f172a !important; /* Slate-900 top bar canopy */
+  color: #ffffff !important;
+}
+:root.light .bg-\[\#070707\] .text-white {
+  color: #ffffff !important;
+}
+:root.light .bg-\[\#070707\] .text-neon-green {
+  color: #38bdf8 !important; /* Turn neon-greens in the top bar to a gorgeous cyan for premium accents */
+}
+:root.light .bg-\[\#070707\] .border-neon-green\/40 {
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+/* Core card container & content overrides */
+:root.light .bg-black {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important; /* Crisp Gray-300 borders */
+}
+
+:root.light .bg-\[\#050505\],
+:root.light .bg-\[\#080808\],
+:root.light .bg-\[\#0a0a09\],
+:root.light .bg-\[\#0c0c0c\],
+:root.light .bg-\[\#0c0c0c\]\/90,
+:root.light .bg-\[\#0c0c0c\]\/80,
+:root.light .bg-\[\#111111\],
+:root.light .bg-black\/60,
+:root.light .bg-black\/80,
+:root.light .bg-black\/95 {
+  background-color: #ffffff !important; /* Card background is pure white */
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Specific component visual enhancements */
+:root.light input, 
+:root.light select {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important; /* Slate-300 for perfect definition */
+}
+:root.light input::placeholder {
+  color: #64748b !important; /* Slate-500 placeholder for visibility */
+}
+
+/* Map white styling text tags to slate-900 so they pop in light context */
+:root.light .text-white {
+  color: #0f172a !important;
+}
+
+/* Ensure secondary slate shades are dense and solid */
+:root.light .text-gray-100 {
+  color: #0f172a !important; /* Extremely high contrast for previous white/light elements */
+}
+:root.light .text-gray-200 {
+  color: #1e293b !important; /* Solid high contrast dark slate */
+}
+:root.light .text-gray-300 {
+  color: #334155 !important; /* Crisp readability */
+}
+:root.light .text-gray-400 {
+  color: #475569 !important; /* Solid Slate gray reading text */
+}
+:root.light .text-gray-500 {
+  color: #64748b !important; /* Slate sub-indicators */
+}
+:root.light .text-gray-700 {
+  color: #1e293b !important;
+}
+
+/* Action button triggers & badges */
+:root.light .bg-neon-green\/10,
+:root.light .bg-neon-green\/15 {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+:root.light .border-neon-green\/10,
+:root.light .border-neon-green\/15,
+:root.light .border-neon-green\/20,
+:root.light .border-neon-green\/25,
+:root.light .border-neon-green\/30,
+:root.light .border-neon-green\/40,
+:root.light .border-border-gray,
+:root.light .border-border-gray\/40 {
+  border-color: #cbd5e1 !important; /* Solid Slate borders */
+}
+
+/* Highlight badge and specific status colors */
+:root.light .text-neon-green {
+  color: #0f172a !important; /* Primary state is solid black/slate */
+}
+:root.light .hover\:text-neon-green:hover {
+  color: #0284c7 !important; /* Hover effect turns sky-600 instead of green for beauty */
+}
+:root.light .hover\:border-neon-green:hover {
+  border-color: #0284c7 !important;
+}
+
+/* Special overrides for dial graphs, meters, etc */
+:root.light .bg-gradient-to-tr {
+  background-image: linear-gradient(to top right, rgba(14, 165, 233, 0.1), transparent) !important;
+}
+:root.light .border-neon-green {
+  border-color: #0f172a !important;
+}
+:root.light .bg-neon-green {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+:root.light .glow-text {
+  text-shadow: none !important;
+}
+:root.light .glow-border {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Keep selected tabs and interactive state clean & balanced */
+:root.light .bg-neon-green.text-black {
+  background-color: #0f172a !important; /* Dark Slate tabs when selected */
+  color: #ffffff !important; /* Clean white text when selected */
+}
+
+/* Map standard sky blue accents */
+:root.light .text-\[\#38bdf8\], 
+:root.light .text-[#38bdf8] {
+  color: #0284c7 !important; /* Cyan-600 */
+}
+
+:root.light .bg-cyan-500 {
+  background-color: #0284c7 !important; /* Sky-600 */
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+}
+
+:root.light .bg-emerald-500 {
+  background-color: #16a34a !important; /* Green-600 */
+  color: #ffffff !important;
+  border-color: #16a34a !important;
+}
+
+:root.light .bg-purple-500 {
+  background-color: #7c3aed !important; /* Purple-600 */
+  color: #ffffff !important;
+  border-color: #7c3aed !important;
+}
+
+:root.light .text-\[\#00eb3a\], 
+:root.light .text-[#00eb3a], 
+:root.light .text-\[\#00FF41\] {
+  color: #16a34a !important; /* Clean rich green for success indicators */
+}
+
+/* =========================================
+   GLITCH & TV STATIC EFFECTS
+   ========================================= */
+.glitch-container {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-logo {
+  animation: glitch-anim 0.3s infinite alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { transform: translate(0) skew(0); filter: drop-shadow(0 0 #00ffcc); }
+  20% { transform: translate(-1.2px, 0.6px) skew(-0.6deg); filter: drop-shadow(-1.2px 0 #00ffcc) hue-rotate(90deg); }
+  40% { transform: translate(0.6px, -0.6px) skew(0.6deg); filter: drop-shadow(1.2px 0 #38bdf8) hue-rotate(-90deg); }
+  60% { transform: translate(-0.6px, 1.2px) skew(-1.2deg); filter: drop-shadow(0.6px 1.2px #00ffcc); }
+  80% { transform: translate(1.2px, -1.2px) skew(1.2deg); filter: drop-shadow(-0.6px -0.6px #38bdf8); }
+  100% { transform: translate(0) skew(0); filter: drop-shadow(0 0 #00ffcc); }
+}
+
+.text-glitch {
+  position: relative;
+  display: inline-block;
+}
+.text-glitch::before,
+.text-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+.text-glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--neon-green-val);
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  animation: glitch-anim-1 0.3s infinite linear alternate-reverse;
+}
+.text-glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #38bdf8;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  animation: glitch-anim-2 0.4s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-4px, 2px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(4px, -2px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-4px, 4px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(4px, -4px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 4px); }
+  100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, -2px); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(4px, -2px); }
+  20% { clip-path: inset(30% 0 20% 0); transform: translate(-4px, 4px); }
+  40% { clip-path: inset(70% 0 10% 0); transform: translate(4px, 2px); }
+  60% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, -4px); }
+  80% { clip-path: inset(50% 0 30% 0); transform: translate(4px, -2px); }
+  100% { clip-path: inset(5% 0 80% 0); transform: translate(-4px, 2px); }
+}
+
+.text-glitch-color {
+  animation: white-to-green 2.4s forwards;
+}
+
+@keyframes white-to-green {
+  0%, 15% { color: #ffffff; text-shadow: 0 0 10px #ffffff; }
+  16%, 18% { color: var(--neon-green-val); text-shadow: 0 0 10px var(--neon-green-val); }
+  19%, 25% { color: #ffffff; text-shadow: 0 0 10px #ffffff; }
+  26%, 28% { color: var(--neon-green-val); text-shadow: 0 0 10px var(--neon-green-val); }
+  29%, 75% { color: #ffffff; text-shadow: 0 0 10px #ffffff; }
+  76%, 100% { color: var(--neon-green-val); text-shadow: 0 0 8px var(--neon-green-dim-val); }
+}
+
+/* Base static overlay layer */
+.tv-static-layer {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+  animation: static-noise 0.2s cubic-bezier(0.1,0.1,0.9,0.9) infinite;
+  pointer-events: none;
+}
+
+@keyframes static-noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -2%); }
+  20% { transform: translate(-4%, 2%); }
+  30% { transform: translate(2%, -4%); }
+  40% { transform: translate(-2%, 6%); }
+  50% { transform: translate(-4%, 2%); }
+  60% { transform: translate(6%, 0); }
+  70% { transform: translate(0, 6%); }
+  80% { transform: translate(1%, 8%); }
+  90% { transform: translate(-4%, 4%); }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "PwnNet Tools",
+  "description": "A high-performance, terminal-themed network toolkit for security professionals.",
+  "requestFramePermissions": [
+    "nfc",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

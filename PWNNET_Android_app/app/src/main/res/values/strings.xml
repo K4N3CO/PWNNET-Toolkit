@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PWN//NET</string>
+    <string name="title_activity_main">PWN//NET</string>
+    <string name="package_name">com.k4n3co.pwnnet</string>
+    <string name="custom_url_scheme">com.k4n3co.pwnnet</string>
+</resources>
