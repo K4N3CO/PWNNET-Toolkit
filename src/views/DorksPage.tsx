@@ -17,6 +17,8 @@ const PRESETS = [
       { name: 'INDEX OF PASSWORD', query: 'intitle:"index of" password' },
       { name: 'PARENT DIRECTORY', query: 'intitle:"index of" "parent directory"' },
       { name: 'INDEX OF BACKUP', query: 'intitle:"index of" backup' },
+      { name: 'INDEX OF SQL', query: 'intitle:"index of" "dump.sql" | "db.sql"' },
+      { name: 'INDEX OF KEY', query: 'intitle:"index of" "key.pem" | "id_rsa"' }
     ]
   },
   {
@@ -25,7 +27,19 @@ const PRESETS = [
       { name: 'GENERIC ADMIN LOGIN', query: 'inurl:admin login' },
       { name: 'WP ADMIN', query: 'inurl:wp-admin' },
       { name: 'ADMINISTRATOR', query: 'intitle:"admin login" | inurl:administrator' },
-      { name: 'CPANEL LOGIN', query: 'inurl:cpanel login' }
+      { name: 'CPANEL LOGIN', query: 'inurl:cpanel login' },
+      { name: 'PMA LOGIN', query: 'inurl:phpmyadmin/index.php' },
+      { name: 'GRAFANA LOGIN', query: 'intitle:"Grafana" "Welcome to"' }
+    ]
+  },
+  {
+    category: 'CRYPTO & WALLETS',
+    dorks: [
+      { name: 'RECOVERY PHRASES', query: 'ext:txt | ext:docx "mnemonic" | "seed phrase"' },
+      { name: 'METAMASK VAULTS', query: 'ext:json "metamask" "vault"' },
+      { name: 'BITCOIN WALLETS', query: 'ext:dat "wallet.dat"' },
+      { name: 'ETHEREUM KEYS', query: 'ext:json "UTC--" "address"' },
+      { name: 'KEPPASS DBs', query: 'ext:kdbx | ext:kdb' }
     ]
   },
   {
@@ -34,7 +48,8 @@ const PRESETS = [
       { name: 'CONFIDENTIAL PDFs', query: 'ext:pdf "confidential" | "strictly confidential"' },
       { name: 'INTERNAL SPREADSHEETS', query: 'ext:xls | ext:xlsx "internal" | "do not distribute"' },
       { name: 'FINANCIAL RECORDS', query: 'ext:doc | ext:docx "financial statement" | "budget"' },
-      { name: 'HR / PAYROLL', query: 'ext:pdf | ext:xls "payroll" | "employee salaries"' }
+      { name: 'HR / PAYROLL', query: 'ext:pdf | ext:xls "payroll" | "employee salaries"' },
+      { name: 'NOTION LEAKS', query: 'site:notion.site "internal" | "confidential"' }
     ]
   },
   {
@@ -43,25 +58,8 @@ const PRESETS = [
       { name: 'SQL PASSWORDS', query: 'ext:sql intext:password' },
       { name: 'ENV DB PASSWORDS', query: 'ext:env "DB_PASSWORD"' },
       { name: 'LOG FILE PASSWORDS', query: 'ext:log "password="' },
-      { name: 'CONFIG PASSWORDS', query: 'ext:yml | ext:json "password:"' }
-    ]
-  },
-  {
-    category: 'SERVER ERROR LOGS',
-    dorks: [
-      { name: 'APACHE ERROR LOGS', query: 'ext:log "Apache Server at" "Port 80"' },
-      { name: 'PHP ERROR LOGS', query: 'ext:log "PHP Parse error" | "PHP Fatal error"' },
-      { name: 'SQL ERROR LOGS', query: 'ext:log "SQL syntax" | "MySQL server version"' },
-      { name: 'GENERIC ERROR LOGS', query: 'ext:log "error" | "exception" | "stacktrace"' }
-    ]
-  },
-  {
-    category: 'DATABASE BACKUPS',
-    dorks: [
-      { name: 'SQL/BAK DUMPS', query: 'ext:sql | ext:bak | ext:db' },
-      { name: 'SQLITE DB EXPOSURE', query: 'ext:sqlite | ext:db3' },
-      { name: 'MYSQL BACKUPS', query: 'ext:sql "MySQL dump"' },
-      { name: 'PGSQL BACKUPS', query: 'ext:sql "PostgreSQL database dump"' }
+      { name: 'CONFIG PASSWORDS', query: 'ext:yml | ext:json "password:"' },
+      { name: 'BASH HISTORY', query: 'inurl:.bash_history' }
     ]
   },
   {
@@ -70,16 +68,46 @@ const PRESETS = [
       { name: 'ENV API KEYS', query: 'ext:env "API_KEY" | "SECRET_KEY"' },
       { name: 'AWS CREDENTIALS', query: 'ext:json "AKIA" | "aws_access_key"' },
       { name: 'GITHUB TOKENS', query: 'ext:env "ghp_"' },
-      { name: 'JWT TOKENS', query: 'ext:json "eyJ" "token"' }
+      { name: 'JWT TOKENS', query: 'ext:json "eyJ" "token"' },
+      { name: 'FIREBASE CONFIGS', query: 'ext:json "firebaseio.com" "apiKey"' }
     ]
   },
   {
-    category: 'LIVE WEBCAMS',
+    category: 'CLOUD NATIVE',
     dorks: [
-      { name: 'AXIS WEBCAMS', query: 'inurl:/view.shtml' },
-      { name: 'NETWORK CAMERAS', query: 'intitle:"Live View / - AXIS"' },
-      { name: 'IP CAMERA LOGIN', query: 'intitle:"webcamXP 5" | inurl:8080/view' },
-      { name: 'MOBOTIX CAMERAS', query: 'inurl:"control/userimage.html"' }
+      { name: 'KUBERNETES SECRETS', query: 'ext:yaml "kind: Secret" "data:"' },
+      { name: 'KUBECONFIG LEAK', query: 'inurl:".kube/config" intitle:"index of"' },
+      { name: 'TERRAFORM STATE', query: 'ext:tfstate | ext:tfvars' },
+      { name: 'DOCKER REGISTRY', query: 'inurl:v2/_catalog' },
+      { name: 'DOCKER COMPOSE', query: 'ext:yml "docker-compose" "MYSQL_ROOT_PASSWORD"' }
+    ]
+  },
+  {
+    category: 'AI & LLM SECRETS',
+    dorks: [
+      { name: 'OPENAI API KEYS', query: 'ext:env | ext:txt "sk-ant" | "sk-proj" | "sk-"' },
+      { name: 'ANTHROPIC KEYS', query: 'ext:env "ANTHROPIC_API_KEY"' },
+      { name: 'HUGGINGFACE TOKENS', query: 'ext:json | ext:env "hf_"' },
+      { name: 'PINECONE DB', query: 'ext:env "PINECONE_API_KEY"' },
+      { name: 'LANGCHAIN LOGS', query: 'ext:log "langchain" "input" "output"' }
+    ]
+  },
+  {
+    category: 'INDUSTRIAL (ICS/OT)',
+    dorks: [
+      { name: 'SCADA INTERFACES', query: 'intitle:"SCADA Login" | inurl:/scada/' },
+      { name: 'MODBUS PANELS', query: 'intitle:"Modbus" inurl:admin' },
+      { name: 'PLC WEB INTERFACE', query: 'intitle:"S7-1200" | intitle:"S7-1500" "web server"' },
+      { name: 'MQTT BROKERS', query: 'intext:"MQTT" "Dashboard" inurl:8083' }
+    ]
+  },
+  {
+    category: 'REMOTE ACCESS',
+    dorks: [
+      { name: 'RDP WEB CLIENT', query: 'intitle:"Remote Desktop Web Connection"' },
+      { name: 'VNC VIEWER', query: 'intitle:"VNC Viewer" inurl:5800' },
+      { name: 'ANYDESK LOGS', query: 'ext:log "AnyDesk" "connection"' },
+      { name: 'TEAMVIEWER CONFIG', query: 'ext:reg "TeamViewer" "Password"' }
     ]
   },
   {
@@ -88,25 +116,8 @@ const PRESETS = [
       { name: '.GIT EXPOSED', query: 'inurl:"/.git"' },
       { name: '.GIT CONFIG', query: 'inurl:".git/config"' },
       { name: 'GIT HEAD EXPOSURE', query: 'inurl:".git/HEAD"' },
-      { name: 'GITHUB DUMPS', query: 'ext:txt "github.com/" "password"' }
-    ]
-  },
-  {
-    category: 'JIRA / TRELLO BOARDS',
-    dorks: [
-      { name: 'PUBLIC JIRA DASHBOARDS', query: 'inurl:jira "dashboard" | inurl:secure/Dashboard.jspa' },
-      { name: 'TRELLO BOARDS', query: 'inurl:trello.com/b' },
-      { name: 'CONFLUENCE EXPOSURE', query: 'inurl:/pages/viewpage.action' },
-      { name: 'ASANA PUBLIC BOARDS', query: 'site:asana.com "public"' }
-    ]
-  },
-  {
-    category: 'OPEN S3 BUCKETS',
-    dorks: [
-      { name: 'AWS S3 EXPOSURE', query: 'site:s3.amazonaws.com' },
-      { name: 'S3 LISTBUCKETRESULT', query: 'intitle:"ListBucketResult"' },
-      { name: 'GCP STORAGE BUCKETS', query: 'site:storage.googleapis.com' },
-      { name: 'AZURE BLOB STORAGE', query: 'site:blob.core.windows.net' }
+      { name: 'GITHUB DUMPS', query: 'ext:txt "github.com/" "password"' },
+      { name: 'GITLAB SECRETS', query: 'inurl:gitlab-secrets.json' }
     ]
   },
   {
@@ -119,84 +130,13 @@ const PRESETS = [
     ]
   },
   {
-    category: 'VULNERABLE SOFTWARE',
-    dorks: [
-      { name: 'PHP INFO', query: 'ext:php intitle:phpinfo' },
-      { name: 'APACHE TOMCAT EXPOSURE', query: 'intitle:"Apache Tomcat" "Welcome to"' },
-      { name: 'JENKINS DASHBOARD', query: 'intitle:"Dashboard [Jenkins]"' },
-      { name: 'SPRING BOOT ACTUATOR', query: 'inurl:/actuator/env' }
-    ]
-  },
-  {
     category: 'EXPOSED APIS',
     dorks: [
       { name: 'SWAGGER UI', query: 'inurl:/swagger-ui.html | intitle:"Swagger UI"' },
       { name: 'GRAPHQL ENDPOINTS', query: 'inurl:/graphql | intitle:"GraphQL Playground"' },
       { name: 'API V1 ENDPOINTS', query: 'inurl:api/v1' },
-      { name: 'JSON API ENDPOINTS', query: 'ext:json "api" | "v1"' }
-    ]
-  },
-  {
-    category: 'CLOUD CREDENTIALS',
-    dorks: [
-      { name: 'PRIVATE KEYS (PEM/KEY)', query: 'ext:pem | ext:ppk | ext:key' },
-      { name: 'AWS CONFIG FILES', query: 'inurl:".aws/credentials"' },
-      { name: 'GCP CREDENTIALS', query: 'ext:json "type": "service_account"' },
-      { name: 'SSH AUTHORIZED KEYS', query: 'inurl:"authorized_keys"' }
-    ]
-  },
-  {
-    category: 'AI & LLM SECRETS',
-    dorks: [
-      { name: 'OPENAI API KEYS', query: 'ext:env | ext:txt "sk-ant" | "sk-proj" | "sk-"' },
-      { name: 'ANTHROPIC KEYS', query: 'ext:env "ANTHROPIC_API_KEY"' },
-      { name: 'HUGGINGFACE TOKENS', query: 'ext:json | ext:env "hf_"' },
-      { name: 'PINECONE DB', query: 'ext:env "PINECONE_API_KEY"' }
-    ]
-  },
-  {
-    category: 'MODERN WEB FRAMEWORKS',
-    dorks: [
-      { name: 'NEXT.JS EXPOSED MAPS', query: 'ext:js.map inurl:_next/static' },
-      { name: 'NUXT APP DATA', query: 'intext:"__NUXT__"' },
-      { name: 'VITE DEV SERVER', query: 'inurl:"@vite/client"' },
-      { name: 'REACT PROFILER', query: 'inurl:?react_perf' }
-    ]
-  },
-  {
-    category: 'CI/CD & AUTOMATION',
-    dorks: [
-      { name: 'GITHUB ACTIONS', query: 'path:.github/workflows ext:yml "password"' },
-      { name: 'GITLAB CI RUNNERS', query: 'ext:yml inurl:.gitlab-ci.yml "token"' },
-      { name: 'TRAVIS CI SECRETS', query: 'inurl:.travis.yml "secure:"' },
-      { name: 'CIRCLE CI', query: 'inurl:.circleci/config.yml "aws_access_key"' }
-    ]
-  },
-  {
-    category: 'MESSAGING & COMMS',
-    dorks: [
-      { name: 'SLACK WEBHOOKS', query: 'ext:py | ext:env "hooks.slack.com/services/"' },
-      { name: 'DISCORD WEBHOOKS', query: 'intext:"discord.com/api/webhooks/" EXCLUDE:"github.com"' },
-      { name: 'TELEGRAM BOTS', query: 'ext:json | ext:env "api.telegram.org/bot"' },
-      { name: 'MS TEAMS WEBHOOKS', query: 'inurl:"webhookb.webhook.office.com"' }
-    ]
-  },
-  {
-    category: 'MODERN DATABASES',
-    dorks: [
-      { name: 'MONGODB URIs', query: 'ext:env "mongodb+srv://"' },
-      { name: 'SUPABASE SECRETS', query: 'ext:env "SUPABASE_KEY" | "SUPABASE_URL"' },
-      { name: 'FIREBASE CONFIGS', query: 'ext:json | ext:env "firebaseio.com" "apiKey"' },
-      { name: 'REDIS URLS', query: 'ext:env "redis://:password"' }
-    ]
-  },
-  {
-    category: 'CLOUD NATIVE',
-    dorks: [
-      { name: 'KUBERNETES SECRETS', query: 'ext:yaml "kind: Secret" "data:"' },
-      { name: 'KUBECONFIG LEAK', query: 'inurl:".kube/config" intitle:"index of"' },
-      { name: 'TERRAFORM STATE', query: 'ext:tfstate | ext:tfvars' },
-      { name: 'DOCKER COMPOSE SECRETS', query: 'ext:yml "docker-compose" "MYSQL_ROOT_PASSWORD"' }
+      { name: 'JSON API ENDPOINTS', query: 'ext:json "api" | "v1"' },
+      { name: 'STRIPE KEYS', query: 'ext:js | ext:env "pk_live_" | "sk_live_"' }
     ]
   }
 ];
@@ -206,11 +146,11 @@ import { useVisualViewport } from '../hooks/useVisualViewport';
 export function DorksPage({ tool, onClose }: DorksPageProps) {
   const keyboardOffset = useVisualViewport();
   const { value: targetDomain, setValue: setTargetDomain, handleKeyDown: handleDomainKeyDown, saveToHistory: saveDomainHistory } = useInputHistory('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
   const [compilingString, setCompilingString] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showDesc, setShowDesc] = useState(false);
   const isKeyboardOpen = keyboardOffset > 0;
 
   useEffect(() => {
@@ -244,7 +184,7 @@ export function DorksPage({ tool, onClose }: DorksPageProps) {
   const validateTarget = (showError = false) => {
     const ipDomainRegex = /^(?:http[s]?:\/\/)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/.*)?$|^(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?:\/.*)?$|^localhost(?:\/.*)?$/;
     if (targetDomain.trim() && !ipDomainRegex.test(targetDomain.trim())) {
-      if (showError) setErrorMsg('INVALID DOMAIN FORMAT');
+      if (showError) setErrorMsg('INVALID FORMAT');
       return false;
     }
     if (showError) setErrorMsg('');
@@ -259,177 +199,152 @@ export function DorksPage({ tool, onClose }: DorksPageProps) {
     navigator.clipboard.writeText(fullSearch);
   };
 
+  const categories = ['ALL', ...PRESETS.map(p => p.category)];
+
+  const filteredDorks = PRESETS.flatMap(p =>
+    p.dorks.map(d => ({ ...d, category: p.category }))
+  ).filter(d => {
+    const matchesSearch = d.name.toLowerCase().includes(searchTerm.toLowerCase()) || d.query.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCat = activeCategory === 'ALL' || d.category === activeCategory;
+    return matchesSearch && matchesCat;
+  });
+
   return (
     <div className="absolute inset-0 z-50 bg-[#080808] flex flex-col font-mono text-gray-200">
       {/* Header */}
       <div className="flex items-center justify-between p-3 sm:p-4 border-b border-neon-green/20 bg-[#0a0a0a] shrink-0">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-neon-green font-bold tracking-widest text-sm sm:text-base uppercase flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <span className="text-neon-green font-bold tracking-widest text-xs sm:text-sm uppercase flex items-center gap-2 truncate">
             GOOGLE DORKS
-          </span>
-          <span className="border border-neon-green text-neon-green text-[10px] px-1.5 py-0.5 rounded uppercase tracking-widest">
-            ACTIVE
           </span>
           <button 
             onClick={toggleFavorite}
-            className={`shrink-0 flex items-center justify-center p-1 rounded-full transition-all ${isFavorite ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-100'}`}
-            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            className={`shrink-0 flex items-center justify-center p-1 rounded-full transition-all ${isFavorite ? 'opacity-100 scale-110' : 'opacity-40'}`}
           >
             <span className={isFavorite ? 'drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]' : 'grayscale'}>⭐</span>
           </button>
         </div>
         <button 
           onClick={onClose}
-          className="flex items-center gap-1.5 text-neon-green border border-neon-green/50 rounded-full px-3 sm:px-4 py-1.5 text-xs font-bold hover:bg-neon-green/10 transition-colors uppercase tracking-widest"
+          className="flex items-center gap-1.5 text-neon-green border border-neon-green/50 rounded-full px-3 sm:px-4 py-1.5 text-[10px] font-bold hover:bg-neon-green/10 transition-colors uppercase tracking-widest"
         >
-          <ArrowLeft size={14} />
+          <ArrowLeft size={12} />
           BACK
         </button>
       </div>
 
-      {/* Description Toggle & Content */}
-      {!isKeyboardOpen && (
-        <>
-          <button
-            onClick={() => setShowDesc(!showDesc)}
-            className="flex items-center justify-center gap-2 py-1 bg-neon-green/5 border-b border-neon-green/10 text-[9px] text-gray-500 uppercase tracking-widest font-bold hover:text-neon-green transition-colors"
-          >
-            {showDesc ? 'Tap to hide description' : 'Tap to view description'}
-          </button>
-          {showDesc && (
-            <div className="flex gap-3 p-4 sm:p-5 bg-neon-green/[0.02] border-b border-neon-green/10 shrink-0 animate-in fade-in slide-in-from-top-1 duration-200">
-              <Search size={16} className="text-neon-green mt-0.5 shrink-0" />
-              <p className="text-gray-400 font-mono text-xs sm:text-[13px] leading-relaxed max-w-4xl">
-                {tool.description}
-              </p>
-            </div>
-          )}
-        </>
-      )}
+      {/* Target & Search Strip */}
+      <div className="p-4 bg-[#0a0a0a] border-b border-neon-green/10 space-y-3 shrink-0">
+        <div className="relative">
+          <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+          <input
+            type="text"
+            value={targetDomain}
+            onChange={(e) => { setTargetDomain(e.target.value); setErrorMsg(''); }}
+            onKeyDown={handleDomainKeyDown}
+            placeholder="TARGET DOMAIN (E.G. TARGET.COM)"
+            className={`w-full bg-black border ${errorMsg ? 'border-red-500' : 'border-neon-green/20'} rounded-xl py-2.5 pl-9 pr-3 text-[11px] text-neon-green outline-none uppercase placeholder:text-neon-green/10 focus:border-neon-green transition-all`}
+          />
+        </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 scrollbar-thin scrollbar-thumb-neon-green/20 scrollbar-track-transparent">
-        <div className="max-w-2xl mx-auto border border-neon-green/20 rounded-[24px] p-5 sm:p-8 bg-[#0a0a0a] shadow-[0_0_20px_rgba(57,255,20,0.03)] focus-within:shadow-[0_0_20px_rgba(57,255,20,0.06)] transition-shadow">
-          
-          <div className="flex items-center gap-3 mb-8">
-            <Globe size={24} className="text-neon-green" />
-            <h2 className="text-white font-bold tracking-widest text-sm sm:text-lg uppercase">
-              GOOGLE DORK VULNERABILITY HELPER
-            </h2>
-          </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
+          <input
+            type="text"
+            placeholder="SEARCH DORKS (E.G. PASSWORDS, S3...)"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-black border border-neon-green/10 rounded-xl py-2.5 pl-9 pr-3 text-[11px] text-white outline-none placeholder:text-gray-700 focus:border-neon-green/50 transition-all uppercase"
+          />
+        </div>
 
-          <div className="space-y-8">
-            
-            {/* Target Input */}
-            <div className="space-y-3 block">
-              <div className="flex items-center justify-between">
-                <label className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                  TARGET DOMAIN NAME (OPTIONAL - LEAVE EMPTY FOR GLOBAL DORK SEARCH)
-                </label>
-                {errorMsg && (
-                  <span className="text-red-500 text-[10px] font-bold uppercase tracking-widest bg-red-500/10 px-2 py-0.5 rounded border border-red-500/30">
-                    {errorMsg}
-                  </span>
-                )}
-              </div>
-              <input
-                type="text"
-                value={targetDomain}
-                onChange={(e) => { setTargetDomain(e.target.value); setErrorMsg(''); }}
-                onKeyDown={handleDomainKeyDown}
-                placeholder="enter domain (e.g. example.com) or leave blank"
-                className={`w-full bg-[#050505] border ${errorMsg ? 'border-red-500/50 focus:border-red-500' : 'border-neon-green/20 focus:border-neon-green'} rounded-xl p-4 sm:p-4 text-neon-green font-mono text-xs sm:text-[13px] outline-none placeholder:text-neon-green/30 transition-all uppercase`}
-                autoCapitalize="none"
-                autoComplete="off"
-                autoCorrect="off"
-                spellCheck={false}
-              />
-            </div>
-
-            {/* Presets */}
-            <div className="space-y-3 block">
-              <label className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">
-                SELECT VULNERABLE SEARCH PRESETS
-              </label>
-              <div className="space-y-2.5">
-                {PRESETS.map((preset, idx) => {
-                  const isActive = activeCategory === preset.category;
-                  return (
-                    <div key={idx} className={`border rounded-xl overflow-hidden transition-all ${isActive ? 'border-neon-green/40 bg-neon-green/[0.04]' : 'border-neon-green/10 bg-[#080808] hover:border-neon-green/30'}`}>
-                      <button
-                        onClick={() => setActiveCategory(isActive ? null : preset.category)}
-                        className={`w-full p-3.5 sm:p-4 text-left flex justify-between items-center font-mono text-xs font-bold uppercase tracking-widest transition-colors ${isActive ? 'text-white' : 'text-gray-300 hover:text-white'}`}
-                      >
-                        {preset.category}
-                        {isActive ? <ChevronDown size={18} className="text-neon-green" /> : <ChevronRight size={18} className="text-gray-600" />}
-                      </button>
-                      
-                      {isActive && (
-                        <div className="p-2 border-t border-neon-green/10 bg-[#050505] space-y-1">
-                          {preset.dorks.map((dork, didx) => (
-                            <button
-                              key={didx}
-                              onClick={() => handleSelectDork(dork.query)}
-                              className="w-full text-left p-3 hover:bg-neon-green/10 text-neon-green/70 hover:text-neon-green text-[11px] sm:text-xs rounded-lg transition-colors truncate uppercase font-bold tracking-wide"
-                            >
-                              {dork.name}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Compiling String */}
-            <div className="border border-neon-green/30 rounded-2xl p-5 sm:p-6 bg-[#050505] relative mt-10">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-gray-400 text-[10px] font-bold tracking-widest uppercase">
-                  DORK COMPILING STRING:
-                </span>
-                <span className="bg-neon-green/10 text-neon-green border border-neon-green/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
-                  EDITABLE
-                </span>
-              </div>
-              <textarea
-                value={compilingString}
-                onChange={(e) => setCompilingString(e.target.value)}
-                placeholder="SELECT A PRESET OR TYPE YOUR QUERY..."
-                className="w-full bg-transparent border-none outline-none text-neon-green font-mono text-sm resize-none h-14 uppercase placeholder:text-neon-green/20"
-                spellCheck={false}
-              />
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={handleCopy}
-                className="flex-1 border border-neon-green/30 hover:border-neon-green hover:bg-neon-green/10 text-neon-green font-bold text-xs uppercase tracking-widest rounded-xl p-4 transition-all flex items-center justify-center active:scale-[0.98] gap-2"
-              >
-                <Copy size={16} />
-                COPY DORK
-              </button>
-
-              <button
-                onClick={async () => {
-                  if (!validateTarget(true) || !compilingString) return;
-                  saveDomainHistory();
-                  const cleanTarget = targetDomain.trim().replace(/https?:\/\//, '');
-                  const query = (cleanTarget ? `site:${cleanTarget} ` : '') + compilingString;
-                  const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                  await openExternalLink(url);
-                }}
-                className={`flex-[2] bg-neon-green text-black border border-neon-green transition-all font-bold text-xs uppercase tracking-widest rounded-xl p-4 flex items-center justify-center active:scale-[0.98] ${!compilingString ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:shadow-[0_0_15px_rgba(57,255,20,0.4)]'}`}
-              >
-                LAUNCH SEARCH
-              </button>
-            </div>
-
-          </div>
+        {/* Category Pills (Horizontal scroll is good for mobile navigation) */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 pt-1">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-[9px] font-bold whitespace-nowrap transition-all border ${activeCategory === cat ? 'bg-neon-green text-black border-neon-green' : 'bg-transparent text-gray-500 border-white/10 hover:border-neon-green/30'}`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* List Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 pb-32 scrollbar-thin scrollbar-thumb-neon-green/20">
+        {filteredDorks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 opacity-20">
+            <Search size={48} />
+            <p className="mt-4 text-xs uppercase tracking-widest font-bold text-center px-10">No matching dorks found in registry</p>
+          </div>
+        ) : (
+          filteredDorks.map((dork, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleSelectDork(dork.query)}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer ${compilingString === dork.query ? 'border-neon-green bg-neon-green/5 shadow-[0_0_15px_rgba(57,255,20,0.05)]' : 'border-white/5 bg-[#0a0a0a] hover:border-neon-green/20'}`}
+            >
+              <div className="flex justify-between items-center mb-1.5">
+                <span className={`text-[10px] font-bold uppercase transition-colors ${compilingString === dork.query ? 'text-neon-green' : 'text-gray-400'}`}>
+                  {dork.name}
+                </span>
+                <span className="text-[8px] text-gray-700 bg-white/[0.03] px-2 py-0.5 rounded border border-white/5 uppercase">{dork.category}</span>
+              </div>
+              <code className="text-[9px] text-gray-500 break-all font-mono leading-relaxed block">
+                {dork.query}
+              </code>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Builder & Actions (Sticky Bottom) */}
+      {!isKeyboardOpen && (
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-[#0a0a0a]/90 backdrop-blur-md border-t border-neon-green/20 space-y-4 shadow-[0_-10px_20px_rgba(0,0,0,0.5)] z-20">
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Active Compiler:</span>
+              <button
+                onClick={() => setCompilingString('')}
+                className="text-[8px] text-red-500/70 hover:text-red-500 uppercase font-black"
+              >
+                [Clear Builder]
+              </button>
+            </div>
+            <div className="bg-black/50 border border-neon-green/20 rounded-xl p-3 min-h-[45px] flex items-center">
+              <p className="text-[11px] text-neon-green font-mono break-all leading-relaxed">
+                {targetDomain.trim() ? <span className="text-gray-400">site:{targetDomain.replace(/https?:\/\//, '')} </span> : ''}
+                {compilingString || <span className="text-neon-green/10 italic">Pick a preset above...</span>}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-3 h-12">
+            <button
+              onClick={handleCopy}
+              className="flex-1 bg-black border border-neon-green/30 text-neon-green font-bold text-[10px] uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95"
+            >
+              <Copy size={14} />
+              COPY
+            </button>
+            <button
+              onClick={async () => {
+                if (!validateTarget(true) || !compilingString) return;
+                saveDomainHistory();
+                const cleanTarget = targetDomain.trim().replace(/https?:\/\//, '');
+                const query = (cleanTarget ? `site:${cleanTarget} ` : '') + compilingString;
+                const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                await openExternalLink(url);
+              }}
+              className={`flex-[2] bg-neon-green text-black font-black text-[10px] uppercase tracking-widest rounded-xl transition-all active:scale-95 ${!compilingString ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-[0_0_20px_rgba(57,255,20,0.4)] shadow-[0_0_10px_rgba(57,255,20,0.2)]'}`}
+            >
+              LAUNCH SEARCH
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
