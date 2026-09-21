@@ -199,6 +199,12 @@ export function DorksPage({ tool, onClose }: DorksPageProps) {
     navigator.clipboard.writeText(fullSearch);
   };
 
+  const fixUrlSlashes = (val: string) => {
+    if (val.startsWith('https:/') && !val.startsWith('https://')) return val.replace('https:/', 'https://');
+    if (val.startsWith('http:/') && !val.startsWith('http://')) return val.replace('http:/', 'http://');
+    return val;
+  };
+
   const categories = ['ALL', ...PRESETS.map(p => p.category)];
 
   const filteredDorks = PRESETS.flatMap(p =>
@@ -239,8 +245,9 @@ export function DorksPage({ tool, onClose }: DorksPageProps) {
           <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
           <input
             type="text"
+            inputMode="url"
             value={targetDomain}
-            onChange={(e) => { setTargetDomain(e.target.value); setErrorMsg(''); }}
+            onChange={(e) => { setTargetDomain(fixUrlSlashes(e.target.value)); setErrorMsg(''); }}
             onKeyDown={handleDomainKeyDown}
             placeholder="TARGET DOMAIN (E.G. TARGET.COM)"
             className={`w-full bg-black border ${errorMsg ? 'border-red-500' : 'border-neon-green/20'} rounded-xl py-2.5 pl-9 pr-3 text-[11px] text-neon-green outline-none uppercase placeholder:text-neon-green/10 focus:border-neon-green transition-all`}

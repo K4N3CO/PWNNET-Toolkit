@@ -42,6 +42,17 @@ const ArcLoader = () => (
   </svg>
 );
 
+// Helper to ensure URL has proper slashes (fixes common mobile typing bug)
+const fixUrlSlashes = (val: string) => {
+  if (val.startsWith('https:/') && !val.startsWith('https://')) {
+    return val.replace('https:/', 'https://');
+  }
+  if (val.startsWith('http:/') && !val.startsWith('http://')) {
+    return val.replace('http:/', 'http://');
+  }
+  return val;
+};
+
 // 1. Web DirScanner
 export function DirScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () => void }) {
   const { value: url, setValue: setUrl } = useInputHistory();
@@ -49,13 +60,16 @@ export function DirScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
   const [results, setResults] = useState<any[]>([]);
 
   const execute = async () => {
-    if (!url) return;
+    let target = fixUrlSlashes(url.trim());
+    if (!target) return;
+    if (!target.startsWith('http')) target = 'https://' + target;
+
     (document.activeElement as HTMLElement)?.blur();
     setStatus('running');
     setResults([]);
-    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: url, status: 'SYSTEM', details: `Target: ${url}` });
+    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: target, status: 'SYSTEM', details: `Target: ${target}` });
 
-    const cleanTarget = url.replace(/^https?:\/\//, '').split('/')[0];
+    const cleanTarget = target.replace(/^https?:\/\//, '').split('/')[0];
     const isPrivateIP = /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(cleanTarget);
 
     if (isNative && isPrivateIP) {
@@ -64,10 +78,10 @@ export function DirScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
           const line = data.line;
           const match = line.match(/^\[\+\]\s+(\/[^\s]+)/);
           if (match) {
-            setResults(prev => [...prev, { path: match[1], status: 200, url: `${url.replace(/\/+$/, '')}${match[1]}` }]);
+            setResults(prev => [...prev, { path: match[1], status: 200, url: `${target.replace(/\/+$/, '')}${match[1]}` }]);
           }
         });
-        await NativeShell.execute({ command: `gobuster dir -u ${url} -w common.txt` });
+        await NativeShell.execute({ command: `gobuster dir -u ${target} -w common.txt` });
         stdoutHandle.remove();
       } catch (e) {
         console.error("Native Gobuster error:", e);
@@ -79,7 +93,7 @@ export function DirScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
 
     try {
       const backendUrl = getBackendUrl();
-      const qs = new URLSearchParams({ target: url }).toString();
+      const qs = new URLSearchParams({ target: target }).toString();
       const res = await fetch(`${backendUrl}/api/net/dirscan?${qs}`);
       if (!res.ok) throw new Error(`Gateway Error: ${res.status}`);
       const data = await res.json();
@@ -89,7 +103,7 @@ export function DirScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
       logService.addLog({
         module: 'DIR_SCAN',
         event: 'Scan Finished',
-        target: url,
+        target: target,
         status: found.length > 0 ? 'OK' : 'WARN',
         details: `Discovered ${found.length} directories.`
       });
@@ -109,8 +123,9 @@ export function DirScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <ClearableInput 
                type="text" 
-               value={url} 
-               onChange={(e) => setUrl(e.target.value)} 
+               inputMode="url"
+               value={url}
+               onChange={(e) => setUrl(fixUrlSlashes(e.target.value))}
                onKeyDown={(e) => { if (e.key === 'Enter') { e.currentTarget.blur(); execute(); } }}
                autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                placeholder="https://example.com"
@@ -167,14 +182,17 @@ export function SpiderTool({ tool, onClose }: { tool: ToolDef; onClose: () => vo
   const [results, setResults] = useState<string[]>([]);
 
   const execute = async () => {
-    if (!url) return;
+    let target = fixUrlSlashes(url.trim());
+    if (!target) return;
+    if (!target.startsWith('http')) target = 'https://' + target;
+
     (document.activeElement as HTMLElement)?.blur();
     setStatus('running');
     setResults([]);
-    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: url, status: 'SYSTEM', details: `Target: ${url}` });
+    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: target, status: 'SYSTEM', details: `Target: ${target}` });
     try {
       const backendUrl = getBackendUrl();
-      const qs = new URLSearchParams({ target: url }).toString();
+      const qs = new URLSearchParams({ target: target }).toString();
       const res = await fetch(`${backendUrl}/api/net/spider?${qs}`);
       if (!res.ok) throw new Error(`Gateway Error: ${res.status}`);
       const data = await res.json();
@@ -199,8 +217,9 @@ export function SpiderTool({ tool, onClose }: { tool: ToolDef; onClose: () => vo
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <ClearableInput 
                type="text" 
-               value={url} 
-               onChange={(e) => setUrl(e.target.value)} 
+               inputMode="url"
+               value={url}
+               onChange={(e) => setUrl(fixUrlSlashes(e.target.value))}
                onKeyDown={(e) => { if (e.key === 'Enter') { e.currentTarget.blur(); execute(); } }}
                autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                placeholder="https://example.com"
@@ -258,14 +277,17 @@ export function ReactScannerTool({ tool, onClose }: { tool: ToolDef; onClose: ()
   const [results, setResults] = useState<any[]>([]);
 
   const execute = async () => {
-    if (!url) return;
+    let target = fixUrlSlashes(url.trim());
+    if (!target) return;
+    if (!target.startsWith('http')) target = 'https://' + target;
+
     (document.activeElement as HTMLElement)?.blur();
     setStatus('running');
     setResults([]);
-    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: url, status: 'SYSTEM', details: `Target: ${url}` });
+    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: target, status: 'SYSTEM', details: `Target: ${target}` });
     try {
       const backendUrl = getBackendUrl();
-      const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
+      const formattedUrl = target;
       
       // Let's also do HTTP headers to populate the scanner
       const headersPromise = fetch(`${backendUrl}/api/net/http?target=${encodeURIComponent(formattedUrl)}`).then(r => r.json()).catch(() => ({}));
@@ -293,8 +315,9 @@ export function ReactScannerTool({ tool, onClose }: { tool: ToolDef; onClose: ()
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <ClearableInput 
                type="text" 
-               value={url} 
-               onChange={(e) => setUrl(e.target.value)} 
+               inputMode="url"
+               value={url}
+               onChange={(e) => setUrl(fixUrlSlashes(e.target.value))}
                onKeyDown={(e) => { if (e.key === 'Enter') { e.currentTarget.blur(); execute(); } }}
                autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                placeholder="target.com"
@@ -357,13 +380,16 @@ export function WpScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =>
   const [data, setData] = useState<any>(null);
 
   const execute = async () => {
-    if (!url) return;
+    let target = fixUrlSlashes(url.trim());
+    if (!target) return;
+    if (!target.startsWith('http')) target = 'https://' + target;
+
     (document.activeElement as HTMLElement)?.blur();
     setStatus('running');
     setData(null);
     try {
       const backendUrl = getBackendUrl();
-      const qs = new URLSearchParams({ target: url }).toString();
+      const qs = new URLSearchParams({ target: target }).toString();
       const [wpRes, httpRes] = await Promise.all([
         fetch(`${backendUrl}/api/net/wpscan?${qs}`).catch(() => ({ json: () => ({}) } as Response)),
         fetch(`${backendUrl}/api/net/http?${qs}`).catch(() => ({ json: () => ({}) } as Response))
@@ -384,8 +410,9 @@ export function WpScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =>
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <ClearableInput 
                type="text" 
-               value={url} 
-               onChange={(e) => setUrl(e.target.value)} 
+               inputMode="url"
+               value={url}
+               onChange={(e) => setUrl(fixUrlSlashes(e.target.value))}
                onKeyDown={(e) => { if (e.key === 'Enter') { e.currentTarget.blur(); execute(); } }}
                autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                placeholder="https://example.com"
@@ -508,11 +535,11 @@ export function NetScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
   const defaultGateway = '192.168.1.1';
 
   const execute = async () => {
-    let target = url || defaultGateway;
+    let target = fixUrlSlashes((url || defaultGateway).trim());
     (document.activeElement as HTMLElement)?.blur();
     setStatus('running');
     setResults([]);
-    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: url, status: 'SYSTEM', details: `Target: ${url}` });
+    logService.addLog({ module: 'DIR_SCAN', event: 'Scan Started', target: target, status: 'SYSTEM', details: `Target: ${target}` });
 
     const isPrivateIP = /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(target);
 
@@ -558,8 +585,9 @@ export function NetScannerTool({ tool, onClose }: { tool: ToolDef; onClose: () =
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <ClearableInput 
                type="text" 
-               value={url} 
-               onChange={(e) => setUrl(e.target.value)} 
+               inputMode="url"
+               value={url}
+               onChange={(e) => setUrl(fixUrlSlashes(e.target.value))}
                onKeyDown={(e) => { if (e.key === 'Enter') { e.currentTarget.blur(); execute(); } }}
                autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                placeholder={`Gateway IP: ${defaultGateway}`}
@@ -629,13 +657,14 @@ export function WhoisTool({ tool, onClose }: { tool: ToolDef; onClose: () => voi
   const [data, setData] = useState<any>('');
 
   const execute = async () => {
-    if (!url) return;
+    let target = fixUrlSlashes(url.trim());
+    if (!target) return;
     (document.activeElement as HTMLElement)?.blur();
     setStatus('running');
     setData('');
     try {
       const backendUrl = getBackendUrl();
-      const qs = new URLSearchParams({ target: url }).toString();
+      const qs = new URLSearchParams({ target: target }).toString();
       const res = await fetch(`${backendUrl}/api/net/whois?${qs}`);
       const json = await res.json();
       setData(json.result);
@@ -653,8 +682,9 @@ export function WhoisTool({ tool, onClose }: { tool: ToolDef; onClose: () => voi
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <ClearableInput 
                type="text" 
-               value={url} 
-               onChange={(e) => setUrl(e.target.value)} 
+               inputMode="url"
+               value={url}
+               onChange={(e) => setUrl(fixUrlSlashes(e.target.value))}
                onKeyDown={(e) => { if (e.key === 'Enter') { e.currentTarget.blur(); execute(); } }}
                autoCapitalize="none" autoCorrect="off" autoComplete="off" spellCheck={false}
                placeholder="google.com"

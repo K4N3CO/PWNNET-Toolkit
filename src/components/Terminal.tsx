@@ -72,6 +72,7 @@ export function TerminalEmulator({ tool, onClose }: TerminalEmulatorProps) {
   const [isRunning, setIsRunning] = useState(false);
   
   const { value: target, setValue: setTarget, handleKeyDown, saveToHistory, historyUp, historyDown } = useInputHistory();
+  const [activeTarget, setActiveTarget] = useState<string>('localhost');
 
   const [showInput, setShowInput] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -144,7 +145,7 @@ export function TerminalEmulator({ tool, onClose }: TerminalEmulatorProps) {
       logService.addLog({
         module: tool ? tool.id.toUpperCase() : 'TERMINAL',
         event: type === 'input' ? 'Command Input' : 'Process Output',
-        target: resolvedTarget || 'localhost',
+        target: activeTarget,
         status: logStatus,
         details: stringContent.substring(0, 500)
       });
@@ -275,6 +276,12 @@ export function TerminalEmulator({ tool, onClose }: TerminalEmulatorProps) {
     setIsRunning(false);
   };
 
+  const fixUrlSlashes = (val: string) => {
+    if (val.startsWith('https:/') && !val.startsWith('https://')) return val.replace('https:/', 'https://');
+    if (val.startsWith('http:/') && !val.startsWith('http://')) return val.replace('http:/', 'http://');
+    return val;
+  };
+
   const handleRunTarget = async (input: string) => {
     if (!input.trim() || !tool) return;
 
@@ -287,7 +294,8 @@ export function TerminalEmulator({ tool, onClose }: TerminalEmulatorProps) {
 
     setIsRunning(true);
     let resolvedTarget = input.trim();
-    if (!resolvedTarget.startsWith('http://') && !resolvedTarget.startsWith('https://') && 
+    setActiveTarget(resolvedTarget);
+    if (!resolvedTarget.startsWith('http://') && !resolvedTarget.startsWith('https://') &&
         (activeToolId === 'http' || activeToolId === 'spider' || activeToolId === 'admin_finder' || activeToolId === 'js_scan' || activeToolId === 'cors_scan')) {
       resolvedTarget = 'https://' + resolvedTarget;
     }
@@ -1233,8 +1241,9 @@ export function TerminalEmulator({ tool, onClose }: TerminalEmulatorProps) {
                 <ClearableInput
                   ref={inputRef}
                   type="text"
+                  inputMode="url"
                   value={target}
-                  onChange={e => setTarget(e.target.value)}
+                  onChange={e => setTarget(fixUrlSlashes(e.target.value))}
                   onKeyDown={handleKeyDown}
                   autoCapitalize="none"
                   autoComplete="off"
