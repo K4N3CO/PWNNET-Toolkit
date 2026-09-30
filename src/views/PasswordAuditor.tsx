@@ -283,11 +283,8 @@ export function HashCrackerTool({ tool, onClose }: { tool: ToolDef, onClose: () 
       const result: any = await NativeShell.crackHash({
         hash: hash.trim(),
         type: hashType,
-        wordlist: wordlist,
-        useCaps: mutationConfig.caps,
-        useNumbers: mutationConfig.numbers,
-        usePunct: mutationConfig.punct,
-        useLeet: mutationConfig.leet
+        wordlistContent: wordlist,
+        useMutations: mutationConfig.caps || mutationConfig.numbers || mutationConfig.punct || mutationConfig.leet
       });
 
       if (result && result.success) {

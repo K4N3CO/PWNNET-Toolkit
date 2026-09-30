@@ -8,4 +8,5 @@ coverage/
 !.env.example
 .idea/
 .gradle/
+.kotlin/
 *.iml

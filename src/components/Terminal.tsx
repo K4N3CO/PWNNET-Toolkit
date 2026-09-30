@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, FormEvent, ReactNode } from 'react';
 import * as OTPAuth from 'otpauth';
 import { QRCodeCanvas } from 'qrcode.react';
 import Barcode from 'react-barcode';
-import { logService } from '../utils/logger';
+import { logService, LogEntry } from '../utils/logger';
 import { 
   X, Terminal as TerminalIcon, Play, RefreshCw, Copy, Check, 
   Cpu, ShieldAlert, Wifi, Globe, MapPin, Hash, KeySquare, Laptop, 

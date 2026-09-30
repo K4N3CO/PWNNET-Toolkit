@@ -8,7 +8,7 @@ import Barcode from 'react-barcode';
 import * as OTPAuth from 'otpauth';
 import { getBackendUrl } from '../config';
 import { openExternalLink } from '../utils/openLink';
-import { Copy, Check, Wifi } from 'lucide-react';
+import { Copy, Check, Wifi, Lock, Unlock, ShieldAlert } from 'lucide-react';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { CapacitorNfc } from '@capgo/capacitor-nfc';
 import { Capacitor } from '@capacitor/core';
@@ -16,6 +16,14 @@ import {
   DefaultCredsTool,
   HashCrackerTool
 } from './PasswordAuditor';
+import {
+  DirScannerTool,
+  SpiderTool,
+  ReactScannerTool,
+  WpScannerTool,
+  NetScannerTool,
+  WhoisTool
+} from './ScannerTools';
 
 // Helper for Copy
 function CopyButton({ text }: { text: string }) {
@@ -761,8 +769,6 @@ export function NotesTool({ tool, onClose }: { tool: ToolDef, onClose: () => voi
   );
 }
 
-import { Unlock, ShieldAlert as VaultShield } from 'lucide-react';
-
 // -----------------------------
 // IP Calculation
 // -----------------------------
@@ -1209,7 +1215,7 @@ function BluetoothTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }
       // Safe exit cleanup
       if (Capacitor.isNativePlatform()) {
         BleClient.stopLEScan().catch(() => {});
-        BleClient.stopAdvertising().catch(() => {});
+        (BleClient as any).stopAdvertising?.().catch(() => {});
       }
     };
   }, []);
@@ -1224,7 +1230,7 @@ function BluetoothTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }
       if (Capacitor.getPlatform() === 'android') {
         // Request permissions first on modern Android
         try {
-            await BleClient.requestPermissions();
+            await (BleClient as any).requestPermissions();
         } catch (e) {
             console.warn('Permission request failed or already granted');
         }
@@ -1254,7 +1260,7 @@ function BluetoothTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }
     try {
       await BleClient.stopLEScan().catch(() => {});
       await new Promise(r => setTimeout(r, 600));
-      await BleClient.stopAdvertising().catch(() => {});
+      await (BleClient as any).stopAdvertising?.().catch(() => {});
     } catch(e) {}
 
     setScanning(false);
@@ -1366,7 +1372,7 @@ function BluetoothTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }
         if (services.length > 0) payload.services = services;
         if (Capacitor.getPlatform() === 'android') payload.name = "";
 
-        await BleClient.startAdvertising(payload);
+        await (BleClient as any).startAdvertising(payload);
         setMessage(`BROADCAST ACTIVE: ${type.toUpperCase()}`);
       } catch (inner: any) {
         console.error('BLE ADVERTISE FAIL', inner);
@@ -1382,7 +1388,7 @@ function BluetoothTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }
 
   const stopSpam = async () => {
     try {
-      await BleClient.stopAdvertising();
+      await (BleClient as any).stopAdvertising();
       setSpamming(false);
       setMessage('Beacon broadcast terminated.');
     } catch(e) {}
@@ -1494,10 +1500,10 @@ function NfcTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }) {
     (document.activeElement as HTMLElement)?.blur();
     try {
       if (Capacitor.isNativePlatform()) {
-        const status = await CapacitorNfc.checkPermissions();
-        if (status.nfc !== 'granted') {
-           const req = await CapacitorNfc.requestPermissions();
-           if (req.nfc !== 'granted') {
+        const status = await (CapacitorNfc as any).checkPermissions?.();
+        if (status && status.nfc !== 'granted') {
+           const req = await (CapacitorNfc as any).requestPermissions?.();
+           if (req && req.nfc !== 'granted') {
               setMessage('NFC Permission Denied.');
               return;
            }
@@ -1558,11 +1564,10 @@ function NfcTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }) {
         // Prepare NDEF message
         // Plugin usually takes payload as byte array or string depending on version
         // We'll attempt a common format for Capacitor NFC plugins
-        await CapacitorNfc.write({
-          ndefMessage: [{
-            tnf: 1, // Well Known
-            type: writeType === 'text' ? [0x54] : [0x55], // 'T' or 'U'
-            payload: Array.from(new TextEncoder().encode(writePayload))
+        await (CapacitorNfc as any).write({
+          records: [{
+            recordType: writeType === 'text' ? 'text' : 'url',
+            data: writePayload
           }]
         });
         setMessage('WRITE SUCCESSFUL!');
@@ -1610,7 +1615,7 @@ function NfcTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }) {
                     <div key={i} className="bg-black/40 border border-neon-green/10 p-4 rounded-xl space-y-2">
                        <div className="flex justify-between items-center border-b border-white/5 pb-2">
                           <span className="text-neon-green font-bold text-[10px] uppercase">TYPE: {r.type}</span>
-                          <Copy size={12} className="text-gray-600 hover:text-white cursor-pointer" onClick={() => copyToCb(r.data)} />
+                          <Copy size={12} className="text-gray-600 hover:text-white cursor-pointer" onClick={() => navigator.clipboard.writeText(r.data)} />
                        </div>
                        <p className="text-xs text-gray-300 font-mono break-all leading-relaxed">{r.data}</p>
                     </div>
@@ -1654,7 +1659,7 @@ function NfcTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }) {
 
             <div className="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl">
                <p className="text-[9px] text-yellow-500/80 font-mono leading-relaxed uppercase">
-                 <VaultShield size={10} className="inline mr-1 mb-0.5" />
+                 <ShieldAlert size={10} className="inline mr-1 mb-0.5" />
                  SECURITY NOTICE: NDEF Writing overwrites sector 0. Ensure target tag is rewritable and not locked by manufacturer password.
                </p>
             </div>
@@ -2145,20 +2150,6 @@ export function DnsTool({ tool, onClose }: { tool: ToolDef, onClose: () => void 
     </CustomToolLayout>
   );
 }
-
-import { 
-  DirScannerTool, 
-  SpiderTool, 
-  ReactScannerTool, 
-  WpScannerTool, 
-  NetScannerTool, 
-  WhoisTool 
-} from './ScannerTools';
-
-import {
-  DefaultCredsTool,
-  HashCrackerTool
-} from './PasswordAuditor';
 
 export function ExploitdbTool({ tool, onClose }: { tool: ToolDef, onClose: () => void }) {
   const { value: keyword, setValue: setKeyword, handleKeyDown, saveToHistory } = useInputHistory('');
